@@ -17,11 +17,11 @@ TOKEN = os.getenv("CAROL_TOKEN")
 GUILD_ID = os.getenv("GUILD_ID")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-<<<<<<< HEAD
 print(f"TOKEN: {TOKEN}")
-=======
+
 keep_alive()
->>>>>>> d2dad80 ('keep_alive.py')
+
+d2dad80 ('keep_alive.py')
 
 # Gemini API設定
 genai.configure(api_key=GEMINI_API_KEY)
