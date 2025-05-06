@@ -119,7 +119,7 @@ async def on_message(message):
 
 
 if __name__ == "__main__":
-    keep_alive()  # Webサーバー起動
+   # keep_alive()  # Webサーバー起動
     try:
         bot.run(TOKEN)  # Discordボット起動
     except Exception as e:
