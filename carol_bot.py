@@ -9,7 +9,6 @@ import json
 import google.generativeai as genai
 from my_utils import load_prompt, load_memory, save_memory, is_active
 import os
-from keep_alive import keep_alive  # ← ファイル名と関数名はこれでOK
 
 TOKEN = os.environ["CAROL_TOKEN"]
 GUILD_ID = os.environ["GUILD_ID"]
@@ -119,7 +118,6 @@ async def on_message(message):
 
 
 if __name__ == "__main__":
-   # keep_alive()  # Webサーバー起動
     try:
         bot.run(TOKEN)  # Discordボット起動
     except Exception as e:
