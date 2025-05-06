@@ -72,7 +72,7 @@ async def get_gemini_response(user_message):
 async def event_trigger():
     if not is_active(ACTIVE_START, ACTIVE_END):
         return
-    channel = discord.utils.get(bot.get_all_channels(), name="談話室")
+    channel = discord.utils.get(bot.get_all_channels(), name="living-room")
     if channel:
         with open(EVENT_FILE, "r", encoding="utf-8") as f:
             events_data = json.load(f)
@@ -112,7 +112,7 @@ async def on_message(message):
     if not is_active(ACTIVE_START, ACTIVE_END):
         return
 
-    if message.channel.name != "談話室":
+    if message.channel.name != "living-room":
         return
 
     user_message = message.content
