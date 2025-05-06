@@ -19,11 +19,11 @@ GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 genai.configure(api_key=GEMINI_API_KEY)
 
 # キャロルの設定
-PROMPT_FILE = "inhabitant/prompts/carol.json"
-MEMORY_FILE = "inhabitant/memory/carol.json"
-EVENT_FILE = "inhabitant/events/carol_events.json"
+PROMPT_FILE = "prompts/carol.json"
+MEMORY_FILE = "memory/carol.json"
+EVENT_FILE = "events/carol_events.json"
 ACTIVE_START = 8  # 朝8時から
-ACTIVE_END = 24  # 夜12時まで
+ACTIVE_END = 25  # 夜1時まで
 
 intents = discord.Intents.default()
 intents.message_content = True
