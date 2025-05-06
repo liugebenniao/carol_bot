@@ -9,6 +9,8 @@ import json
 import google.generativeai as genai
 from my_utils import load_prompt, load_memory, save_memory, is_active
 import os
+from keep_alive import keep_alive
+keep_alive()
 
 TOKEN = os.environ["CAROL_TOKEN"]
 GUILD_ID = os.environ["GUILD_ID"]
