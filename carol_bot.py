@@ -11,17 +11,9 @@ from my_utils import load_prompt, load_memory, save_memory, is_active
 import os
 from keep_alive import keep_alive  # ← ファイル名と関数名はこれでOK
 
-TOKEN = os.environ['CAROL_TOKEN']  # Secrets に設定したキー名
-
-TOKEN = os.getenv("CAROL_TOKEN")
-GUILD_ID = os.getenv("GUILD_ID")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-print(f"TOKEN: {TOKEN}")
-
-keep_alive()
-
-d2dad80 ('keep_alive.py')
+TOKEN = os.environ("CAROL_TOKEN")
+GUILD_ID = os.environ("GUILD_ID")
+GEMINI_API_KEY = os.environ("GEMINI_API_KEY")
 
 # Gemini API設定
 genai.configure(api_key=GEMINI_API_KEY)
