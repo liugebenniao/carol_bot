@@ -16,6 +16,9 @@ from datetime import datetime, timedelta, timezone
 TOKEN = os.environ["CAROL_TOKEN"]
 GUILD_ID = os.environ["GUILD_ID"]
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+ACTIVE_START = 8   # 午前8時
+ACTIVE_END = 25    # 午前1時
+
 
 # Gemini API設定
 genai.configure(api_key=GEMINI_API_KEY)
