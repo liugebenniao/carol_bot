@@ -53,14 +53,12 @@ def load_memory(file_path):
 # Geminiへのリクエスト関数（プロンプトをちゃんと送る版）
 async def get_gemini_response(user_message):
     try:
-        model = genai.GenerativeModel(model_name="gemini-1.5-pro")
-        safety_settings={
+        model = genai.GenerativeModel(model_name="gemini-1.5-pro",   safety_settings={
         "HARASSMENT": "block_none",
         "HATE": "block_none",
         "SEXUAL": "block_none",
         "DANGEROUS": "block_none"
-    }
-)
+    })
         full_prompt = f"{prompt}\n\nユーザー: {user_message}\nキャロル:"
         response = await asyncio.wait_for(asyncio.to_thread(
             model.generate_content, full_prompt),
