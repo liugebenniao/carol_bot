@@ -50,19 +50,33 @@ def load_memory(file_path):
 
 
 # Geminiへのリクエスト関数
-# Geminiへのリクエスト関数（プロンプトをちゃんと送る版）
 async def get_gemini_response(user_message):
     try:
-        model = genai.GenerativeModel(model_name="gemini-1.5-pro",   safety_settings={
-        "HARASSMENT": "block_none",
-        "HATE": "block_none",
-        "SEXUAL": "block_none",
-        "DANGEROUS": "block_none"
-    })
+        model = genai.GenerativeModel(model_name="gemini-1.5-pro",
+        safety_settings=[
+        {
+            "category": "HARM_CATEGORY_HARASSMENT",
+            "threshold": "BLOCK_NONE"
+        },
+        {
+            "category": "HARM_CATEGORY_HATE_SPEECH",
+            "threshold": "BLOCK_NONE"
+        },
+        {
+            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            "threshold": "BLOCK_NONE"
+        },
+        {
+            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+            "threshold": "BLOCK_NONE"
+        },
+    ]
+)
         full_prompt = f"{prompt}\n\nユーザー: {user_message}\nキャロル:"
-        response = await asyncio.wait_for(asyncio.to_thread(
-            model.generate_content, full_prompt),
-                                          timeout=10)
+        response = await asyncio.wait_for(
+    asyncio.to_thread(model.generate_content, full_prompt),
+    timeout=10
+)
         return response.text.strip()
     except asyncio.TimeoutError:
         print("Geminiの応答がタイムアウトしました")
