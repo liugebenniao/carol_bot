@@ -82,8 +82,9 @@ async def get_gemini_response(user_message):
         print("Geminiの応答がタイムアウトしました")
         return "ごめん、ちょっと考えすぎちゃったみたい……"
     except Exception as e:
-        print(f"Geminiエラー: {e}")
-        return "ごめん、ちょっと今うまく返事できないみたい……"
+    error_message = f"ごめん、ちょっと今うまく返事できないみたい……（エラー: {e}）"
+    print(f"Geminiエラー: {e}", flush=True)
+    return error_message
 
 
 # イベントを自動発生させる
