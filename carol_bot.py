@@ -11,6 +11,7 @@ from my_utils import load_prompt, load_memory, save_memory, is_active
 import os
 from keep_alive import keep_alive
 keep_alive()
+from datetime import datetime, timedelta, timezone
 
 TOKEN = os.environ["CAROL_TOKEN"]
 GUILD_ID = os.environ["GUILD_ID"]
@@ -23,8 +24,11 @@ genai.configure(api_key=GEMINI_API_KEY)
 PROMPT_FILE = "prompts/carol.json"
 MEMORY_FILE = "memory/carol.json"
 EVENT_FILE = "events/carol_events.json"
-ACTIVE_START = 8  # 朝8時から
-ACTIVE_END = 25  # 夜1時まで
+
+def is_active(start, end):
+    jst = timezone(timedelta(hours=9))
+    now = datetime.now(jst).hour
+    return start <= now < end
 
 intents = discord.Intents.default()
 intents.message_content = True
