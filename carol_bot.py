@@ -7,7 +7,7 @@ import asyncio
 import random
 import json
 import google.generativeai as genai
-from my_utils import load_prompt, load_memory, save_memory, is_active
+from my_utils import load_prompt, load_memory, save_memory
 import os
 from keep_alive import keep_alive
 keep_alive()
