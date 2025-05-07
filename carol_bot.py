@@ -55,11 +55,12 @@ async def get_gemini_response(user_message):
     try:
         model = genai.GenerativeModel(model_name="gemini-1.5-pro")
         safety_settings={
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT:HarmBlockThreshold.BLOCK_NONE
-        })
+        "HARASSMENT": "block_none",
+        "HATE": "block_none",
+        "SEXUAL": "block_none",
+        "DANGEROUS": "block_none"
+    }
+)
         full_prompt = f"{prompt}\n\nユーザー: {user_message}\nキャロル:"
         response = await asyncio.wait_for(asyncio.to_thread(
             model.generate_content, full_prompt),
