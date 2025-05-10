@@ -43,15 +43,6 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 prompt = load_prompt(PROMPT_FILE)
 memory = load_memory(MEMORY_FILE)
 
-
-def load_memory(file_path):
-    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    else:
-        return {}
-
-
 # Geminiへのリクエスト関数
 async def get_gemini_response(user_message):
     try:
