@@ -8,7 +8,6 @@ import random
 import json
 import google.generativeai as genai
 from my_utils import load_prompt, load_memory, save_memory
-import os
 from keep_alive import keep_alive
 keep_alive()
 import time
@@ -18,7 +17,7 @@ TOKEN = os.environ["CAROL_TOKEN"]
 GUILD_ID = os.environ["GUILD_ID"]
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 ACTIVE_START = 8   # 午前8時
-ACTIVE_END = 25    # 午前1時
+ACTIVE_END = 1    # 午前1時
 
 # グローバル変数の初期化
 last_message_time = 0
@@ -34,7 +33,10 @@ EVENT_FILE = "events/carol_events.json"
 def is_active(start, end):
     jst = timezone(timedelta(hours=9))
     now = datetime.now(jst).hour
+    if end < start:  # 例: 22〜2時など日をまたぐ場合
+        return now >= start or now < end
     return start <= now < end
+
 
 intents = discord.Intents.default()
 intents.message_content = True
