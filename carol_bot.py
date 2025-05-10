@@ -20,6 +20,8 @@ GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 ACTIVE_START = 8   # 午前8時
 ACTIVE_END = 25    # 午前1時
 
+# グローバル変数の初期化
+last_message_time = 0
 
 # Gemini API設定
 genai.configure(api_key=GEMINI_API_KEY)
@@ -93,19 +95,19 @@ async def get_gemini_response(user_message):
 async def event_trigger():
     global last_message_time
     if not is_active(ACTIVE_START, ACTIVE_END):
-       return
-    
-    # 現在時刻を取得
+        return
+
     current_time = time.time()
-    
-    # 最後のメッセージから10分以上経っていれば定型文を送信
-    if current_time - last_message_time >= 600:  # 600秒 = 10分
+    if current_time - last_message_time >= 600:
         channel = discord.utils.get(bot.get_all_channels(), name="living-room")
-    if channel:
-        with open(EVENT_FILE, "r", encoding="utf-8") as f:
-            events_data = json.load(f)
-        event_message = random.choice(events_data["events"])
-        await channel.send(event_message)
+        if channel:
+            try:
+                with open(EVENT_FILE, "r", encoding="utf-8") as f:
+                    events_data = json.load(f)
+                event_message = random.choice(events_data["events"])
+                await channel.send(event_message)
+            except Exception as e:
+                print(f"イベント送信エラー: {e}")
 
 
 # 起動時に実行
@@ -132,10 +134,12 @@ async def dice(interaction: discord.Interaction, message: str):
 # メッセージに反応
 @bot.event
 async def on_message(message):
+    global last_message_time
+
     if message.author == bot.user:
         return
 
-    await bot.process_commands(message)  # コマンドと通常メッセージを両方処理
+    await bot.process_commands(message)
 
     if not is_active(ACTIVE_START, ACTIVE_END):
         return
@@ -145,18 +149,14 @@ async def on_message(message):
 
     user_message = message.content
     response_text = await get_gemini_response(user_message)
-
-    # キャロルらしい自然な返しだけ送る
     await message.channel.send(response_text)
 
-    # メモリに保存
     memory["last_message"] = message.content
     save_memory(MEMORY_FILE, memory)
 
-    # ユーザーからのメッセージや他のBotが送ったメッセージがあったかどうか
-    # 他のメッセージがあればその時点でlast_message_timeを更新
     if message.content:
         last_message_time = time.time()
+
 
 if __name__ == "__main__":
     try:
