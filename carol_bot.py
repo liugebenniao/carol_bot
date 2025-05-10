@@ -11,6 +11,7 @@ from my_utils import load_prompt, load_memory, save_memory
 import os
 from keep_alive import keep_alive
 keep_alive()
+import time
 from datetime import datetime, timedelta, timezone
 
 TOKEN = os.environ["CAROL_TOKEN"]
@@ -90,9 +91,16 @@ async def get_gemini_response(user_message):
 # イベントを自動発生させる
 @tasks.loop(minutes=30)
 async def event_trigger():
+    global last_message_time
     if not is_active(ACTIVE_START, ACTIVE_END):
-        return
-    channel = discord.utils.get(bot.get_all_channels(), name="living-room")
+       return
+    
+    # 現在時刻を取得
+    current_time = time.time()
+    
+    # 最後のメッセージから10分以上経っていれば定型文を送信
+    if current_time - last_message_time >= 600:  # 600秒 = 10分
+        channel = discord.utils.get(bot.get_all_channels(), name="living-room")
     if channel:
         with open(EVENT_FILE, "r", encoding="utf-8") as f:
             events_data = json.load(f)
@@ -145,6 +153,10 @@ async def on_message(message):
     memory["last_message"] = message.content
     save_memory(MEMORY_FILE, memory)
 
+    # ユーザーからのメッセージや他のBotが送ったメッセージがあったかどうか
+    # 他のメッセージがあればその時点でlast_message_timeを更新
+    if message.content:
+        last_message_time = time.time()
 
 if __name__ == "__main__":
     try:
