@@ -142,6 +142,7 @@ async def on_message(message):
 
     user_message = message.content
     response_text = await get_gemini_response(user_message)
+    await asyncio.sleep(random.uniform(1.0, 3.0))
     await message.channel.send(response_text)
 
     memory["last_message"] = message.content
