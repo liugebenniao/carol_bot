@@ -1,3 +1,4 @@
+#carol_bot
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands
@@ -24,6 +25,7 @@ GOODBYE_KEYWORDS = ["おやすみ", "またね", "ばいばい", "さような�
 
 # グローバル変数の初期化
 last_message_time = 0
+conversation_enabled = True  # 会話モードのフラグ
 
 # Gemini API設定
 genai.configure(api_key=GEMINI_API_KEY)
@@ -46,6 +48,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 prompt = load_prompt(PROMPT_FILE)
 memory = load_memory(MEMORY_FILE)
+conversation_enabled = memory.get("conversation_enabled", True)
 
 # Geminiへのリクエスト関数
 async def get_gemini_response(user_message):
@@ -122,6 +125,18 @@ async def dice(interaction: discord.Interaction, message: str):
     result = random.choice(["成功！", "失敗……"])
     await interaction.response.send_message(f"{message}\n判定結果: {result}")
 
+# スラッシュコマンド: 会話モードをオンオフ切り替える
+@bot.tree.command(name="toggle_conversation",
+                  description="キャロルの会話モードをオン/オフにします",
+                  guild=discord.Object(id=GUILD_ID))
+async def toggle_conversation(interaction: discord.Interaction):
+    global conversation_enabled
+    conversation_enabled = not conversation_enabled
+    memory["conversation_enabled"] = conversation_enabled
+    save_memory(MEMORY_FILE, memory)
+    status = "オン" if conversation_enabled else "オフ"
+    await interaction.response.send_message(f"会話モードを{status}にしました")
+
 # メッセージに反応
 @bot.event
 async def on_message(message):
@@ -138,22 +153,15 @@ async def on_message(message):
     if message.channel.name != "living-room":
         return
 
-    if message.content == memory.get("last_message"):
+    if not conversation_enabled:
         return
 
     user_message = message.content
-    last_bot_response = memory.get("last_bot_response", "")
-
-    if any(word in user_message for word in GOODBYE_KEYWORDS):
-        if any(word in last_bot_response for word in GOODBYE_KEYWORDS):
-            return
-
     response_text = await get_gemini_response(user_message)
-    await asyncio.sleep(random.uniform(1.5, 3.5))
+    await asyncio.sleep(random.uniform(1.0, 3.0))
     await message.channel.send(response_text)
 
     memory["last_message"] = message.content
-    memory["last_bot_response"] = response_text
     save_memory(MEMORY_FILE, memory)
 
     if message.content:
