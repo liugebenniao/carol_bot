@@ -157,11 +157,16 @@ async def on_message(message):
         return
 
     user_message = message.content
+
+        # もし前のメッセージと同じ内容なら、Bot自身の返信を避ける
+    if user_message == memory.get("last_message", ""):
+        return
+
     response_text = await get_gemini_response(user_message)
     await asyncio.sleep(random.uniform(1.0, 3.0))
     await message.channel.send(response_text)
 
-    memory["last_message"] = message.content
+    memory["last_message"] = user_message
     save_memory(MEMORY_FILE, memory)
 
     if message.content:
