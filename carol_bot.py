@@ -20,7 +20,7 @@ ACTIVE_END = 1    # 午前1時
 
 JST = timezone(timedelta(hours=9))
 
-GOODBYE_KEYWORDS = ["おやすみ", "またね", "ばいばい", "さようなら", "おつかれ"]
+GOODBYE_KEYWORDS = ["おやすみ", "またね", "ばいばい", "さようなら"]
 
 # グローバル変数の初期化
 last_message_time = 0
