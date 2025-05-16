@@ -53,6 +53,21 @@ def save_affinity(user_id, value):
     with open(AFFINITY_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
+def build_prompt(base_prompt, user_id):
+    affinity = load_affinity(user_id)
+    affinity_comment = ""
+
+    if affinity >= 100:
+        affinity_comment = "Extremely intimate, almost like lovers"
+    elif affinity >= 50:
+        affinity_comment = "Very close friends"
+    elif affinity >= 10:
+        affinity_comment = "Friends"
+    else:
+        affinity_comment = "Getting to know each other"
+
+    return f"{base_prompt}\n\n現在の親密度: {affinity}\n{affinity_comment}"
+
 
 def is_active(start, end):
     jst = timezone(timedelta(hours=9))
