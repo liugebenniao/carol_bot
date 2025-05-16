@@ -34,6 +34,25 @@ genai.configure(api_key=GEMINI_API_KEY)
 PROMPT_FILE = "prompts/carol.json"
 MEMORY_FILE = "memory/carol.json"
 EVENT_FILE = "events/carol_events.json"
+AFFINITY_FILE = "memory/affinity.json"
+
+def load_affinity(user_id):
+    if not os.path.exists(AFFINITY_FILE):
+        return 0
+    with open(AFFINITY_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get(str(user_id), 0)
+
+def save_affinity(user_id, value):
+    if os.path.exists(AFFINITY_FILE):
+        with open(AFFINITY_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    else:
+        data = {}
+    data[str(user_id)] = value
+    with open(AFFINITY_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
 
 def is_active(start, end):
     jst = timezone(timedelta(hours=9))
