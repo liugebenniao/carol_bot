@@ -214,6 +214,10 @@ async def on_message(message):
     if not conversation_enabled:
         return
 
+    if message.type != discord.MessageType.default:
+        return
+
+
     user_message = message.content
 
         # もし前のメッセージと同じ内容なら、Bot自身の返信を避ける
