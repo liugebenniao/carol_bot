@@ -85,7 +85,7 @@ memory = load_memory(MEMORY_FILE)
 conversation_enabled = memory.get("conversation_enabled", True)
 
 # Geminiへのリクエスト関数
-async def get_gemini_response(user_message):
+async def get_gemini_response(user_message, user_id):
     try:
         model = genai.GenerativeModel(model_name="gemini-2.0-flash",
         safety_settings=[
@@ -107,7 +107,7 @@ async def get_gemini_response(user_message):
         },
     ]
 )
-        full_prompt = f"{build_prompt(prompt, message.author.id)}\n\nユーザー: {user_message}\nキャロル:"
+        full_prompt = f"{build_prompt(prompt, user_id)}\n\nユーザー: {user_message}\nキャロル:"
         response = await asyncio.wait_for(
     asyncio.to_thread(model.generate_content, full_prompt),
     timeout=10
@@ -224,7 +224,7 @@ async def on_message(message):
     if user_message == memory.get("last_message", ""):
         return
 
-    response_text = await get_gemini_response(user_message)
+    response_text = await get_gemini_response(user_message, message.author.id)
     await asyncio.sleep(random.uniform(1.0, 3.0))
     await message.channel.send(response_text)
 
