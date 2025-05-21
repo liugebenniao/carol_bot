@@ -107,7 +107,7 @@ async def get_gemini_response(user_message):
         },
     ]
 )
-        full_prompt = f"{prompt}\n\nユーザー: {user_message}\nキャロル:"
+        full_prompt = f"{build_prompt(prompt, message.author.id)}\n\nユーザー: {user_message}\nキャロル:"
         response = await asyncio.wait_for(
     asyncio.to_thread(model.generate_content, full_prompt),
     timeout=10
@@ -153,16 +153,16 @@ async def on_ready():
 
 # スラッシュコマンド: ダイスを振る
 @bot.tree.command(name="dice",
-                  description="サイコロを振る",
-                  guild=discord.Object(id=GUILD_ID))
+                description="サイコロを振る",
+                guild=discord.Object(id=GUILD_ID))
 async def dice(interaction: discord.Interaction, message: str):
     result = random.choice(["成功！", "失敗……"])
     await interaction.response.send_message(f"{message}\n判定結果: {result}")
 
 # スラッシュコマンド: 会話モードをオンオフ切り替える
 @bot.tree.command(name="toggle_conversation",
-                  description="キャロルの会話モードをオン/オフにします",
-                  guild=discord.Object(id=GUILD_ID))
+                description="キャロルの会話モードをオン/オフにします",
+                guild=discord.Object(id=GUILD_ID))
 async def toggle_conversation(interaction: discord.Interaction):
     global conversation_enabled
     conversation_enabled = not conversation_enabled
@@ -170,6 +170,30 @@ async def toggle_conversation(interaction: discord.Interaction):
     save_memory(MEMORY_FILE, memory)
     status = "オン" if conversation_enabled else "オフ"
     await interaction.response.send_message(f"会話モードを{status}にしました")
+
+@bot.tree.command(
+    name="affinity",
+    description="キャロルとの親密度を確認します",
+    guild=discord.Object(id=GUILD_ID)
+)
+async def check_affinity(interaction: discord.Interaction):
+    user_id = interaction.user.id
+    affinity = load_affinity(user_id)
+
+    # コメントつける
+    if affinity >= 100:
+        comment = "…だいすき！"
+    elif affinity >= 50:
+        comment = "ともだち！"
+    elif affinity >= 10:
+        comment = "いいかんじかも"
+    else:
+        comment = "まだまだこれから"
+
+    await interaction.response.send_message(
+        f"{interaction.user.display_name} との親密度: {affinity}/100\n{comment}"
+    )
+
 
 # メッセージに反応
 @bot.event
