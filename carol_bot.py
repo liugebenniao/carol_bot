@@ -228,6 +228,16 @@ async def on_message(message):
     await asyncio.sleep(random.uniform(1.0, 3.0))
     await message.channel.send(response_text)
 
+        # 返信送ったあとで親密度アップ
+    current_affinity = load_affinity(message.author.id)
+
+    # 特別なワードチェック（例：「ありがとう」含まれてたらボーナス）
+    bonus = 2 if "ありがとう" in message.content else 0
+
+    new_affinity = min(current_affinity + 1 + bonus, 100)  # 上限100
+    save_affinity(message.author.id, new_affinity)
+
+
     memory["last_message"] = user_message
     save_memory(MEMORY_FILE, memory)
 
